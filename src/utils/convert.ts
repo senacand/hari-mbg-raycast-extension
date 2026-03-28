@@ -1,5 +1,6 @@
 const HARI_MBG = 1_200_000_000_000;
-const MENIT_MBG = HARI_MBG / (24 * 60);
+const JAM_MBG = HARI_MBG / 24;
+const MENIT_MBG = JAM_MBG / 60;
 const DETIK_MBG = MENIT_MBG / 60;
 
 export type Result = { title: string; copy: string };
@@ -11,13 +12,15 @@ function fmt(n: number, decimals = 6): string {
 
 function toCompound(idr: number): string {
   const totalDetik = idr / DETIK_MBG;
-  const hari = Math.floor(totalDetik / 86_400);
-  const menit = Math.floor((totalDetik % 86_400) / 60);
+  const hari  = Math.floor(totalDetik / 86_400);
+  const jam   = Math.floor((totalDetik % 86_400) / 3_600);
+  const menit = Math.floor((totalDetik % 3_600) / 60);
   const detik = totalDetik % 60;
 
   const parts: string[] = [];
-  if (hari > 0) parts.push(`${fmt(hari, 0)} Hari`);
-  if (menit > 0 || (hari > 0 && detik > 0)) parts.push(`${fmt(menit, 0)} Menit`);
+  if (hari > 0)  parts.push(`${fmt(hari, 0)} Hari`);
+  if (jam > 0)   parts.push(`${fmt(jam, 0)} Jam`);
+  if (menit > 0) parts.push(`${fmt(menit, 0)} Menit`);
   if (detik > 0) parts.push(`${fmt(detik)} Detik`);
 
   return parts.join("; ") + " MBG";
@@ -29,6 +32,7 @@ export function convert(idr: number): ConvertResult {
   const decimals: Result[] = (
     [
       [idr / HARI_MBG, "Hari"],
+      [idr / JAM_MBG, "Jam"],
       [idr / MENIT_MBG, "Menit"],
       [idr / DETIK_MBG, "Detik"],
     ] as [number, string][]
