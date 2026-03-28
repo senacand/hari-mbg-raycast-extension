@@ -7,7 +7,7 @@ export default function Command() {
   const [input, setInput] = useState("");
 
   const idr = parseFloat(input.replace(/[,.\s]/g, ""));
-  const { compound, decimals } = input.length > 0 && !isNaN(idr)
+  const { compound, decimals } = input.length > 0 && !isNaN(idr) && idr > 0
     ? convert(idr)
     : { compound: null, decimals: [] };
 
